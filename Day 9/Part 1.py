@@ -1,16 +1,18 @@
-instructions = [("R", 4),
-("U", 4),
-("L", 3),
-("D", 1),
+instructions = [("U", 2),
+("D", 2),
+...
 ("R", 4),
-("D", 1),
-("L", 5),
-("R", 2)]
+("D", 7)]
+
+def euclidean(head, tail):
+    return ((head[0]-tail[0])**2 + (head[1]-tail[1])**2)**.5
 
 head = [0, 0]
 minus_one = [0, 0]
-minus_two = [0, 0]
 tail = [0, 0]
+saved_tail = [0, 0]
+
+ed = euclidean(head, tail)
 
 head_moves = list()
 head_moves.append(head)
@@ -24,13 +26,8 @@ for i in instructions:
     
     for m in range(moves):
         
-        if(len(head_moves)>=2):
+        if(len(head_moves)>=1):
             minus_one = head_moves[-1]
-            minus_two = head_moves[-2]
-        
-        if(head == tail):
-            tail_moves.append(tail)
-        
         
         new_head = head
         if(direction=="U"):
@@ -47,8 +44,23 @@ for i in instructions:
         head = new_head
         head_moves.append(head)
         
-        print(f"H: {head}, H-1: {minus_one}, H-2: {minus_two}, T: {tail}")
+        # calculate euclidean distance between head and tail
+        ed = euclidean(head, tail)
         
-    
-print(head_moves)
+        # process tail
+        if(head==tail or ed<2):
+            tail = saved_tail
+            tail_moves.append(tail)
+        else:
+            tail = minus_one
+            tail_moves.append(tail)
+            saved_tail = tail
+
+# removing duplicate values from list of lists
+
+no_dups = []
+for coord in tail_moves:
+    if(coord not in no_dups):
+        no_dups.append(coord)
         
+print(f"The Tail traversed {len(no_dups)} unique spaces.")
